@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="styles.css" rel="stylesheet">
+<title>Ресторан Волга - Бронирование</title>
+</head>
+<body>
+<div id="header">
+  <h1 сlass="header-name">Волга-прекрасна</h1>
+  <div id="nav">
+    <span class="nav_list"><a href="http://localhost/Kursovik_2/Сайт/Главная.html">Главная</a></span>
+    <span class="nav_list"><a href="http://localhost/Kursovik_2/Сайт/Залы.html">Залы</a></span>
+    <span class="nav_list"><a href="http://localhost/Kursovik_2/Сайт/Бронь.html">Бронь</a></span>
+    <span class="nav_list"><a href="http://localhost/Kursovik_2/Сайт/Контакты.html">Контакты</a></span>
+    <span class="nav_list"><a href="http://localhost/Kursovik_2/Сайт/О_сайте.html">О сайте</a></span>
+  </div>
+</div>
+<!-- <div class="wrapper">
+<div id="sidebar1" class="aside">
+
+</div> -->
+
+<script>
+async function zapros(e){
+  let response = await fetch("/Kursovik_2/Сайт/Connection.php?action=table&id="+e);
+  if (response.ok) {
+  let json = await response.text();
+  return(json);
+  } else {
+    alert("Ошибка HTTP: " + response.status);
+  }
+}
+async function get_brone(){
+  let name = document.querySelector('p[type=Name] input').value;
+  let phone = document.querySelector('p[type=Telefon] input').value;
+  let date = document.querySelector('p[type=Chislo] input').value;
+  let dop = document.querySelector('p[type=Message] input').value;
+  let tb_id = document.querySelector('div.blok_stolik').id;
+  let err=false;
+  if (name=='') {
+    document.querySelector('p[type=Name] input').classList.add("err");
+    err=true;
+  }
+  if (phone=='') {
+    document.querySelector('p[type=Telefon] input').classList.add("err");
+    err=true;
+  }
+  if (date=='') {
+    document.querySelector('p[type=Chislo] input').classList.add("err");
+    err=true;
+  }
+  if (err) return;
+  let url = '/Kursovik_2/Сайт/Connection.php?action=brone'
+  url+='&name='+name
+  url+='&phone='+phone
+  url+='&date='+date
+  url+='&dop='+dop
+  url+='&tbid='+tb_id
+  let response = await fetch(url);
+  if (response.ok) {
+    let res = await response.text();
+    if(res=='zakazan'){
+      document.querySelector('p[type=Chislo] input').classList.add("err");
+      alert('Столик уже забронирован на этот день')
+    }
+    if (res=='broniroval'){
+      alert('Вы уже забронировали столик на этот день')
+    }
+    console.log(res);
+    if (res=='success '){
+      alert('Бронирование прошло успешно')
+    }
+  } else {
+    alert("Ошибка HTTP: " + response.status);
+  }
+}
+async function get_svob() {
+  if (document.querySelector('div.blocked')){
+    document.querySelectorAll('div.blocked').forEach(element => {
+      element.classList.remove('blocked')
+    });
+  }
+  err = false
+  let date = document.querySelector('p[type=Chislo] input').value;
+  if (date=='') {
+    document.querySelector('p[type=Chislo] input').classList.add("err");
+    err=true;
+  }
+  if (err) return;
+  let url = '/Kursovik_2/Сайт/Connection.php?action=svob'
+  url+='&date='+date
+  let response = await fetch(url);
+  if (response.ok) {
+    let res = await response.json();
+    res.forEach(e => {
+      img = document.querySelector('div#st_'+e)
+      img.classList.add('blocked')
+    });
+    if (!document.querySelector('.switch input').checked){
+      document.querySelectorAll('div.blocked').forEach(element => {
+      element.classList.remove('blocked')
+  });
+    }
+  } else {
+    alert("Ошибка HTTP: " + response.status);
+  }  
+}
+function get_max_day(e) {
+  let now = new Date();
+  y=now.getFullYear();
+  m=(now.getMonth()+1).toString();
+  d=now.getDate().toString();
+  if(m.length==1) m=0+m
+  if(d.length==1) d=0+d
+  e.setAttribute('min',(y+'-'+m+'-'+d))
+
+  now.setDate(now.getDate()+7)
+  y=now.getFullYear();
+  m=(now.getMonth()+1).toString();
+  d=now.getDate().toString();
+  if(m.length==1) m=0+m
+  if(d.length==1) d=0+d
+  e.setAttribute('max',(y+'-'+m+'-'+d))
+}
+function stolik(){
+let parent = document.querySelector('#table_stoliki');
+let img = document.querySelector('img')
+let natural_h = img.naturalHeight
+let client_h = img.clientHeight
+let scale = client_h/natural_h
+let stoliks = img.parentElement.querySelectorAll('div')
+  stoliks.forEach((element,i) => {
+    element.style.width = (+element.style.width.replace('px','') * scale)+'px'
+    element.style.height = (+element.style.height.replace('px','') * scale)+'px'
+    element.style.top = (+element.style.top.replace('px','') * scale)+'px'
+    element.style.left = (+element.style.left.replace('px','') * scale)+'px'
+    element.addEventListener("click",blok_stolik)
+    element.id = 'st_'+(i+1);
+});
+};
+function blok_stolik(i){
+  id=i.target.id.replace('st_','')
+  if(document.querySelector('div.active')) document.querySelector('div.active').classList.remove('active')
+  if (!i.target.classList.contains('blocked')) i.target.classList.add('active')
+  if(document.querySelectorAll('#table_stoliki div.blok_stolik').length != 0){
+    let el = document.getElementsByClassName('blok_stolik');
+    let el2 = document.querySelector('#table_stoliki div.blok_stolik');
+    el2.remove(); 
+  }
+  let parent = document.querySelector('#table_stoliki');
+  let p = document.createElement('div');
+  let Fotografiya = zapros(id);
+  p.classList.add("blok_stolik");
+  p.id=id
+  parent.prepend(p);
+  Fotografiya.then( function(e){
+    let Fotografiya=e
+    p.innerHTML = '<img class="stol" src="/Kursovik_2/Сайт/Images/'+Fotografiya+'"></img><div class="button_bron" onclick="get_brone()">Забронировать</div>';
+  })
+};
+
+window.addEventListener("DOMContentLoaded", function() {
+    [].forEach.call( document.querySelectorAll('.tel'), function(input) {
+    var keyCode;
+    function mask(event) {
+        event.keyCode && (keyCode = event.keyCode);
+        var pos = this.selectionStart;
+        if (pos < 3) event.preventDefault();
+        var matrix = "+7 (___) ___ ____",
+            i = 0,
+            def = matrix.replace(/\D/g, ""),
+            val = this.value.replace(/\D/g, ""),
+            new_value = matrix.replace(/[_\d]/g, function(a) {
+                return i < val.length ? val.charAt(i++) || def.charAt(i) : a
+            });
+        i = new_value.indexOf("_");
+        if (i != -1) {
+            i < 5 && (i = 3);
+            new_value = new_value.slice(0, i)
+        }
+        var reg = matrix.substr(0, this.value.length).replace(/_+/g,
+            function(a) {
+                return "\\d{1," + a.length + "}"
+            }).replace(/[+()]/g, "\\$&");
+        reg = new RegExp("^" + reg + "$");
+        if (!reg.test(this.value) || this.value.length < 5 || keyCode > 47 && keyCode < 58) this.value = new_value;
+        if (event.type == "blur" && this.value.length < 5)  this.value = ""
+    }
+
+    input.addEventListener("input", mask, false);
+    input.addEventListener("focus", mask, false);
+    input.addEventListener("blur", mask, false);
+    input.addEventListener("keydown", mask, false)
+
+  });
+
+});
+</script>
+<div id="article" class="main_content">
+
+
+
+<!-- <div class="dj"></div> -->
+
+<!-- блок представления оформлен в виде формы -->
+<form class="form">
+    <h2 class="header_section">Контакты</h2>
+    <p type="Name"><input placeholder="Введите своё имя"></input></p>
+    <p type="Telefon" ><input class="tel" placeholder="Введите свой телефон"></input></p>
+    <p type="Chislo"><input style="cursor:pointer;"onclick="get_max_day(this)" onchange="get_svob()" type="date" placeholder="День бронирования"></input></p>
+    <span class="dop_info">Столики бронируются с 19:00 МСК до закрытия ресторана.</span>
+    <p type="Message"><input placeholder="Дополнительно"></input></p>
+</form>
+<div style="display: flex;
+justify-content: space-between;"><h2 class="header_section">Выбрать столик</h2>
+</div>
+<div onclick="get_svob()" style="display: flex;
+flex-direction: row;
+gap: 15px;
+align-items: center;"><span style="font-size: 0.8rem;" class="dop_info">Свободные столики</span><label class="switch">
+  <input type="checkbox"> 
+  <span style="width: 50px;
+  height: 25px;" class="slider round"></span>
+
+</label></div>
+<div style="position: relative;">
+<img style="width: 100%;" src="/Kursovik_2/Сайт/Images/Icon_table_1.png">
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 90px;
+left: 83px;">
+</div> 
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 290px;
+left: 86px;">
+</div> 
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 462px;
+left: 87px;">
+</div>
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 636px;
+left: 95px;">
+</div>
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 353px;
+left: 426px;">
+</div>
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top:  584px;
+left: 426px;">
+</div>
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 290px;
+left: 743px;">
+</div>
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 461px;
+left: 743px;">
+</div>
+<div style="position: absolute;
+width: 80px;
+height: 60px;
+top: 637px;
+left: 743px;;">
+</div>
+<table id="table_stoliki"></table>
+<script>stolik();</script>
+</body>
+</div>
+</div>
+
+</div>
+</body>
+</html>

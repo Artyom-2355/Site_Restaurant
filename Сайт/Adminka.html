@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="styles.css" rel="stylesheet">
+
+<title>Ресторан Волга</title>
+ <style>
+@font-face { 
+    font-family: 'cbuc-icons24';
+    src: url(/Kursovik_2/Сайт/fonts/cbuc-icons24.eot),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons24.woff),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons24.woff2),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons24.ttf);
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face { 
+     font-family: 'tensorfont';
+     src: url(/Kursovik_2/Сайт/fonts/TensorFont.eot),
+         url(/Kursovik_2/Сайт/fonts/TensorFont.woff),
+         url(/Kursovik_2/Сайт/fonts/TensorFont.woff2),
+         url(/Kursovik_2/Сайт/fonts/TensorFont.ttf),
+         url(/Kursovik_2/Сайт/fonts/TensorFont.svg);
+     font-weight: normal;
+     font-style: normal;
+}
+@font-face { 
+    font-family: 'cbuc-icons';
+    src: url(/Kursovik_2/Сайт/fonts/cbuc-icons.eot),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons.woff),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons.woff2),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons.ttf),
+         url(/Kursovik_2/Сайт/fonts/cbuc-icons.svg);
+    font-weight: normal;
+    font-style: normal;
+}
+     #main {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    #okno {
+        width: 300px;
+        height: 50px;
+        text-align: center;
+        padding: 15px;
+        border: 3px solid #000000;
+        border-radius: 10px;
+        color: #000000;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 25;
+        left: 0;
+        margin: auto;
+    }
+    #main:target {display: block;}
+	  
+	.zatemnenie {
+        background: rgba(102, 102, 102, 0.68);
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        display: none;
+        z-index: 9999999999;
+    }
+
+    window {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 400px;
+        border: 1px solid #cecece;
+        padding: 50px;
+        transform: translate(-50%,-50%);
+        background-color: #fafafa;
+    }
+
+    div#main_text a.close_windoww {
+        position: absolute;
+        right: 10px;
+        top: 4px;
+        border: none;
+    }
+    div.modal_brone_zal{
+        position: fixed;
+        top: 50%;
+        margin-top: -200px;
+        margin-left: -200px;
+        left: 50%;
+        z-index: 3;
+        width: 400px;
+        background: #fff;
+        padding: 15px;
+        border: 1px solid #47382F;
+        border-radius: 15px;
+    }
+    .bron_button{
+        text-align: center;
+        padding: 8px 12px;
+        margin: 8px 0 0;
+        font-family: 'Montserrat',sans-serif;
+        border: 2px solid #5a5a6e;
+        background: #fff;
+        color: #5a5a6e;
+        cursor: pointer;
+        transition: all .3s;
+        bottom: 0px;
+        right: 0px;
+    }
+    </style>
+</head>
+
+<body>
+<div id="header">
+<h1>Волга-прекрасна</h1>
+<div id="nav">
+<span><a href="#">Админка</a></span>
+</div>
+</div>
+<script>
+window.onload = async function(){
+    let url = '/Kursovik_2/Сайт/Connection.php?action=adminka'; 
+    let response = await fetch(url);
+    if (response.ok) {
+        let res = await response.json();
+        tbody = document.querySelector('table tbody')
+        let html=''
+        res.forEach((element, index) => {
+            html+='<tr>'
+                element.forEach(e => {
+                    html+='<td>'
+                    html+=e
+                    html+='</td>'
+                });
+            html+='<td>'
+            html+='<span onclick="del(this)" style="font-family:\'cbuc-icons24\';cursor:pointer;color:#d79292"></span>'
+            html+='</td>'
+            html+='</tr>'
+        });
+        tbody.innerHTML = html;
+    }
+}
+async function del(e){
+    let tr = e.parentElement.parentElement
+    let id = tr.firstChild.innerText
+    let url = '/Kursovik_2/Сайт/Connection.php?action=delbrone';
+    url +='&id=' +id
+    let response = await fetch(url);
+    if (response.ok) {
+        tr.remove();
+    }
+}
+function open_brone_zal() {
+    if(document.querySelector('div.modal_brone_zal'))document.querySelector('div.modal_brone_zal').remove()
+    modal = document.createElement('div')
+    modal.classList.add('modal_brone_zal')
+    let html=`<h5>Бронирование</h5><p type="Name"><input placeholder="Введите своё имя"></input></p>
+    <p type="Telefon"><input placeholder="Введите свой телефон"></input></p>
+    <p type="Chislo"><input onclick="get_max_day(this)" type="date" placeholder="День бронирования"></input></p>
+    <p type="Stolik"><input placeholder="Номер столика"></input></p>
+    <span class="dop_info">Столики бронируются с 19:00 МСК до закрытия ресторана.</span>
+    <p type="Message"><input placeholder="Дополнительно"></input></p><div class="bron_button" onclick="get_brone()">Забронировать</div>`
+    modal.innerHTML=html
+    document.body.appendChild(modal)
+}
+function get_max_day(e) {
+  let now = new Date();
+  y=now.getFullYear();
+  m=(now.getMonth()+1).toString();
+  d=now.getDate().toString();
+  if(m.length==1) m=0+m
+  if(d.length==1) d=0+d
+  e.setAttribute('min',(y+'-'+m+'-'+d))
+
+  now.setDate(now.getDate()+7)
+  y=now.getFullYear();
+  m=(now.getMonth()+1).toString();
+  d=now.getDate().toString();
+  if(m.length==1) m=0+m
+  if(d.length==1) d=0+d
+  e.setAttribute('max',(y+'-'+m+'-'+d))
+}
+async function get_brone(){
+  let name = document.querySelector('p[type=Name] input').value;
+  let phone = document.querySelector('p[type=Telefon] input').value;
+  let date = document.querySelector('p[type=Chislo] input').value;
+  let dop = document.querySelector('p[type=Message] input').value;
+  let tb_id = document.querySelector('p[type=Stolik] input').value;
+  let err=false;
+  if (name=='') {
+    document.querySelector('p[type=Name] input').classList.add("err");
+    err=true;
+  }
+  if (phone=='') {
+    document.querySelector('p[type=Telefon] input').classList.add("err");
+    err=true;
+  }
+  if (date=='') {
+    document.querySelector('p[type=Chislo] input').classList.add("err");
+    err=true;
+  }
+  if (err) return;
+  let url = '/Kursovik_2/Сайт/Connection.php?action=brone'
+  url+='&name='+name
+  url+='&phone='+phone
+  url+='&date='+date
+  url+='&dop='+dop
+  url+='&tbid='+tb_id
+  let response = await fetch(url);
+  if (response.ok) {
+    let res = await response.text();
+    if(res=='zakazan'){
+      document.querySelector('p[type=Chislo] input').classList.add("err");
+      alert('Столик уже забронирован на этот день')
+    }
+    if (res=='broniroval'){
+      alert('Вы уже забронировали столик на этот день')
+    }
+    console.log(res);
+    if (res=='success '){
+      alert('Бронирование прошло успешно')
+      location.reload();
+    }
+  } else {
+    alert("Ошибка HTTP: " + response.status);
+  }
+}
+</script>
+<div id="article" class="main_content">
+<form class="form">
+<span style="font-size: 1rem;" class="dop_info">Через столики 10-12 бронируются залы</span>
+<table style="margin: auto;cursor:default;" cellpadding="5px">
+	<thead>
+		<tr>
+			<th>id</th>
+			<th>Дата</th>
+			<th>Имя</th>
+			<th>Телефон</th>
+            <th>Столик</th>
+            <th><span onclick="open_brone_zal()" style="font-family:'cbuc-icons24';cursor:pointer;"></span></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			
+		</tr> 
+	</tbody>
+</table>
+</form>
+</div>
+
+</body>
+</html>

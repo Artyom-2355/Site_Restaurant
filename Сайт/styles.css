@@ -1,0 +1,450 @@
+/* Страница */
+* {
+    box-sizing: border-box;
+    }
+    /* html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, ul, li{
+    /* margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    vertical-align: baseline; 
+    } */
+    body {
+    font-family: Verdana, Arial, sans-serif;
+    /* background-color: #f7f7f7; */
+    }
+    #header{ 
+        margin: auto;
+    /* background-color: #f4f4f4; */
+    }
+    #header h1 {
+        text-align: center;
+        font-size: 24px;
+        text-transform: uppercase;
+        font-weight: bold;
+        padding: 30px 0px 20px;
+        clear: both;
+        width: max-content;
+        margin: auto;
+    }
+    #nav {
+        display: flex;
+        align-content: center;
+        width: 100%!important;
+        gap: 5px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+    #nav .nav_list{
+        margin: 0;
+    width: max-content;
+    margin: 0;
+    width: max-content;
+    /* border-left: 1px solid;
+    border-bottom: 1px solid;
+    padding: 0px 2px 2px */
+    }
+    #nav a {
+        width: 80px;
+    text-align: center;
+    display: block;
+    color: #47382F;
+    text-decoration: none;
+    }
+    #n li:last-child a {
+    border-right: none; 
+    }
+    #nav a:hover {
+    font-weight: bold;
+    }
+    .wrapper{
+        display: none;
+    }
+    .aside h2 {
+    font-size: 0.95em;
+    margin-top: 15px;
+    }
+    .aside h3 {
+    font-size: 0.85em;
+    margin-top: 10px;
+    }
+    .aside p, .aside li {
+    font-size: .75em;
+    margin-top: 10px; 
+    }
+    .aside li{ 
+    list-style-type: none;
+    }
+    #sidebar1 {
+    float: left;
+    width: 20%; 
+    padding: 0 10px 0 20px;
+    }
+    #sidebar2 {
+    float: right;
+    width: 20%; 
+    padding: 0 20px 0 10px;
+    }
+    #article{
+    padding: 15px;
+    width: 60%;
+    }
+    #article:after{
+    clear:both;
+    display:table;
+    content:'';
+    }
+    #article h2{
+    font-size: 1.3em;
+    margin: 5px 0px;
+    cursor: default;
+    }
+    #article p{
+    line-height: 150%;
+    margin: 10px 0px;
+    }
+    #footer{  
+    font-size: .8em; 
+    text-align: center;
+    padding: 10px 10px 30px 10px;
+    }
+    #footer p {
+    margin: 0px;
+    }
+    .wrapper, #header, #footer, #article{
+        width: 60%;
+        max-width: 730px;
+        margin: auto;
+    }
+   
+	 /* Окошко */
+	 .modal {
+    position: fixed; /* фиксированное положение */
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,0.5); /* фон */
+    z-index: 1050;
+    opacity: 0; /* по умолчанию модальное окно прозрачно */
+    -webkit-transition: opacity 200ms ease-in; 
+    -moz-transition: opacity 200ms ease-in;
+    transition: opacity 200ms ease-in; /* анимация перехода */
+    pointer-events: none; /* элемент невидим для событий мыши */
+    margin: 0;
+    padding: 0;
+}
+/* При отображении модального окно */
+.modal:target {
+    opacity: 1; /* делаем окно видимым */
+	  pointer-events: auto; /* элемент видим для событий мыши */
+    overflow-y: auto; /* добавляем прокрутку по y, когда элемент не помещается на страницу */
+}
+/* ширина модального окна и его отступы от экрана */
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 10px;
+}
+@media (min-width: 576px) {
+  .modal-dialog {
+      max-width: 500px;
+      margin: 30px auto; /* отображение окна по центру */
+  }
+}
+/* Стили для блока с контентом окна */ 
+.modal-content {
+    position: relative;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0,0,0,.2);
+    border-radius: .3rem;
+    outline: 0;
+}
+@media (min-width: 768px) {
+  .modal-content {
+      -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+      box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  }
+}
+/* Стили заголовка окна */
+.modal-header {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #eceeef;
+}
+.modal-title {
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+/* Стили кнопки "х" ("Закрыть")  */
+.close {
+    float: right;
+    font-family: sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+    color: #47382F;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .5;
+    text-decoration: none;
+}
+/* Стили для закрывающей кнопки в фокусе или наведении */
+.close:focus, .close:hover {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: .75;
+}
+/* Стили блока основного содержимого окна */
+.modal-body {
+  position: relative;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 15px;
+    overflow: auto;
+}
+/*---------------------------------------------------------Поле регистрации столов */
+body{
+    /* background:#59ABE3; */
+    margin:0;
+    color: #47382F;
+}
+h2{ 
+    padding-bottom: 3px;
+    width: max-content;
+    color: #47382F;
+    border-bottom: 3px solid #D7C6AC;
+}
+input{
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background: none;
+    outline: none;
+    resize: none;
+    border: 0;
+    font-family: 'Montserrat',sans-serif;
+    transition: all .3s;
+    border-bottom: 2px solid #47382F;
+}
+input.err{
+    border-bottom:2px solid #d79292
+}
+input:focus{
+    border-bottom:2px solid #47382F
+}
+
+button{
+    float:right;
+    padding:8px 12px;
+    margin:8px 0 0;
+    font-family:'Montserrat',sans-serif;
+    border:2px solid #47382F;
+    background:0;
+    color:#47382F;
+    cursor:pointer;
+    transition:all .3s}
+button:hover{
+    background:#47382F;
+    color:#fff
+}
+span{
+    margin:0 5px 0 15px
+}
+/*---------------------------------------------------------столики */
+.stolik{
+    width: 120px;
+    height: 120px;
+}
+.stolik.blocked{
+    border: 1px solid red;
+}
+.stol{
+    width: 100%;
+    height: 100%;
+}
+.blok_stolik{
+    width: 100%;
+    height: 280px;
+    background-color: #5a5a6e;
+    position: relative;
+}
+#table_stoliki{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+.button_bron{
+    float: right;
+    padding: 8px 12px;
+    margin: 8px 0 0;
+    font-family: 'Montserrat',sans-serif;
+    border: 2px solid #5a5a6e;
+    background: #fff;
+    color: #47382F;
+    cursor: pointer;
+    transition: all .3s;
+    bottom: 0px;
+    position: absolute;
+    right: 0px;
+}
+.button_bron:hover{border:2px solid #fff;background:#5a5a6e;color:#fff}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 25px;
+    }
+    
+    /* Скрыть флажок HTML по умолчанию */
+    .switch input {display:none;}
+    
+    /* Слайдер */
+    .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border: 2px solid #D7C6AC;
+    margin: unset;
+    }
+    
+    .slider:before {
+    position: absolute;
+    content: "";
+    height: 17px;
+    width: 17px;
+    left: 2px;
+    bottom: 2px;
+    background-color: #D7C6AC;
+    -webkit-transition: .4s;
+    transition: .4s;
+    }
+    
+    input:checked + .slider {
+    background-color: #D7C6AC;
+    }
+    
+    
+    input:checked + .slider:before {
+    -webkit-transform: translateX(24px);
+    -ms-transform: translateX(24px);
+    transform: translateX(24px);
+    background-color: #47382F;
+}
+
+
+    
+    /* Закругленные ползунки */
+    .slider.round {
+    border-radius: 34px;
+    }
+    
+    .slider.round:before {
+    border-radius: 50%;
+    }
+
+
+    #main {
+        display: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #okno {
+        width: 300px;
+        height: 50px;
+        text-align: center;
+        padding: 15px;
+        border: 3px solid #000000;
+        border-radius: 10px;
+        color: #000000;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 25;
+        left: 0;
+        margin: auto;
+      }
+      #main:target {display: block;}
+	  
+	  .zatemnenie {
+background: rgba(102, 102, 102, 0.68);
+width: 100%;
+height: 100%;
+position: fixed;
+top: 0;
+left: 0;
+display: none;
+z-index: 9999999999;
+}
+
+window {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 400px;
+border: 1px solid #cecece;
+padding: 50px;
+transform: translate(-50%,-50%);
+background-color: #fafafa;
+}
+
+div#main_text a.close_windoww {
+position: absolute;
+right: 10px;
+top: 4px;
+border: none;
+}
+div.blocked{
+  background-color: #00000085;
+}
+div.active{
+  background-color: #59abe380;
+}
+span.dop_info{
+    color: #D7C6AC;
+    font-size: 0.7rem;
+    margin: 0px;;
+}
+.zal_img{
+    width: 90%;
+    border-radius: 8px;
+}
